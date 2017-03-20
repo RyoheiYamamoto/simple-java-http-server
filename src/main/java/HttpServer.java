@@ -2,6 +2,7 @@ import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.time.LocalDateTime;
 import java.util.logging.Logger;
 
 import static java.lang.String.format;
@@ -40,12 +41,15 @@ public class HttpServer {
                 line = reader.readLine();
             }
             final String msg = sb.toString();
-            logger.info(msg);
 
             // レスポンスの生成
-            final OutputStream out = socket.getOutputStream();
-            out.write(msg.getBytes());
-            out.close();
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            writer.write("HTTP/1.1 200 OK\n");
+            writer.write(format("Date: %s\n", LocalDateTime.now()));
+            writer.write("\n");
+            writer.write("<h1>はきばのページ</h1>\n");
+            writer.write("<div>こんにちは！</div>\n");
+            writer.close();
 
             socket.close();
         } catch (IOException e) {
