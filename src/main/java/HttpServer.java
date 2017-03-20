@@ -1,5 +1,4 @@
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -31,10 +30,20 @@ public class HttpServer {
             logger.info(format("serving HTTP on %s port %s", hostName, port));
             final Socket socket = serverSocket.accept();
 
+            // リクエストの読込
+            final InputStream in = socket.getInputStream();
+            final BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            final StringBuilder sb = new StringBuilder();
+            String line = reader.readLine();
+            while (!line.isEmpty()) {
+                sb.append(line).append("\n");
+                line = reader.readLine();
+            }
+            final String msg = sb.toString();
+            logger.info(msg);
 
             // レスポンスの生成
             final OutputStream out = socket.getOutputStream();
-            final String msg = "Hello, Client!!!";
             out.write(msg.getBytes());
             out.close();
 
