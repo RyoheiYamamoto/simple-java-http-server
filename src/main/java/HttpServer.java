@@ -1,9 +1,11 @@
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.logging.Logger;
 
-import static java.lang.String.*;
+import static java.lang.String.format;
 
 /**
  * JavaによるシンプルなWebサーバー
@@ -20,16 +22,23 @@ public class HttpServer {
         try {
             // ソケットの作成
             final InetSocketAddress address = new InetSocketAddress(HOST, PORT);
-            final ServerSocket socket = new ServerSocket();
-            socket.bind(address);
+            final ServerSocket serverSocket = new ServerSocket();
+            serverSocket.bind(address);
 
             // リクエストの受付開始
-            final String hostName = socket.getInetAddress().getHostName();
-            final int port = socket.getLocalPort();
+            final String hostName = serverSocket.getInetAddress().getHostName();
+            final int port = serverSocket.getLocalPort();
             logger.info(format("serving HTTP on %s port %s", hostName, port));
-            socket.accept();
+            final Socket socket = serverSocket.accept();
 
-            logger.info("Hello Request!");
+
+            // レスポンスの生成
+            final OutputStream out = socket.getOutputStream();
+            final String msg = "Hello, Client!!!";
+            out.write(msg.getBytes());
+            out.close();
+
+            socket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
