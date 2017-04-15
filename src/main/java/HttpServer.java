@@ -45,6 +45,7 @@ public class HttpServer {
             // レスポンスの生成
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             writer.write("HTTP/1.1 200 OK\n");
+            writer.write("Content-type:text/html;charset=utf-8\n");
             writer.write(format("Date: %s\n", LocalDateTime.now()));
             writer.write("\n");
             writer.write("<h1>はきばのページ</h1>\n");
